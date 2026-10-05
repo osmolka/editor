@@ -1,0 +1,158 @@
+:root {
+  color-scheme: light dark;
+  font: 16px/1.5 system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.error-text {
+  color: #c0392b;
+}
+
+.owner-tag {
+  opacity: 0.7;
+  font-size: 0.9em;
+}
+
+.back-button {
+  margin-bottom: 16px;
+}
+
+.list-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.import-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.import-hint {
+  opacity: 0.6;
+  font-size: 0.85em;
+}
+
+.document-section {
+  border-left: 3px solid transparent;
+  padding-left: 12px;
+  margin-bottom: 24px;
+}
+
+.document-section.owned {
+  border-left-color: #2d6cdf;
+}
+
+.document-section.shared {
+  border-left-color: #8e44ad;
+}
+
+.doc-badge {
+  display: inline-block;
+  font-size: 0.7em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+.doc-badge.owned {
+  background: rgba(45, 108, 223, 0.12);
+  color: #2d6cdf;
+}
+
+.doc-badge.shared {
+  background: rgba(142, 68, 173, 0.12);
+  color: #8e44ad;
+}
+
+.share-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.share-status {
+  font-size: 0.9em;
+}
+
+.share-status.success {
+  color: #1e8e3e;
+}
+
+.share-status.error {
+  color: #c0392b;
+}
+
+.editor-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.title-input {
+  flex: 1;
+  font-size: 1.4em;
+  font-weight: 600;
+  padding: 4px 8px;
+}
+
+.save-status {
+  opacity: 0.6;
+  font-size: 0.9em;
+  min-width: 90px;
+}
+
+.editor-toolbar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.toolbar-button {
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.toolbar-button.active {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+.editor-content .ProseMirror {
+  min-height: 300px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 12px;
+  outline: none;
+}
+
+.editor-content .ProseMirror ul,
+.editor-content .ProseMirror ol {
+  padding-left: 1.5em;
+}
