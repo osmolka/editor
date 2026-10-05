@@ -30,7 +30,8 @@ and the server.
 
 ## Setup
 
-Requires Node.js 20+.
+Requires Node.js `^20.19.0 || >=22.12.0`. Node.js 24.11.1 is pinned in `.nvmrc` for local
+development; run `nvm use` before installing dependencies or starting the app (`nvm install` if needed).
 
 ```bash
 npm install                 # installs client + server workspaces
