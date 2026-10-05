@@ -25,6 +25,10 @@ async function request<T>(userId: number, path: string, init?: RequestInit): Pro
     throw new ApiError(res.status, body.error ?? `Request failed with status ${res.status}`)
   }
 
+  if (res.status === 204) {
+    return undefined as T
+  }
+
   return res.json() as Promise<T>
 }
 
@@ -59,6 +63,10 @@ export function updateDocumentContent(userId: number, id: number, content: strin
     method: 'PATCH',
     body: JSON.stringify({ content }),
   })
+}
+
+export function deleteDocument(userId: number, id: number) {
+  return request<void>(userId, `/documents/${id}`, { method: 'DELETE' })
 }
 
 export function shareDocument(userId: number, id: number, email: string) {

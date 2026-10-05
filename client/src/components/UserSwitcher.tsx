@@ -5,8 +5,9 @@ export function UserSwitcher() {
 
   return (
     <label className="user-switcher">
-      Acting as{' '}
+      <span className="user-switcher-label">Acting as</span>
       <select
+        className="user-switcher-select"
         value={currentUser.id}
         onChange={(e) => setCurrentUserId(Number(e.target.value))}
       >

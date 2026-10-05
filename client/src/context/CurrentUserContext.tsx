@@ -2,7 +2,7 @@ import { createContext, useContext, useMemo, useState, type ReactNode } from 're
 import { SEEDED_USERS } from '../seeded-users'
 import type { SeededUser } from '../types'
 
-const STORAGE_KEY = 'redactor.currentUserId'
+const STORAGE_KEY = 'editor.currentUserId'
 
 interface CurrentUserContextValue {
   currentUser: SeededUser

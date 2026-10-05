@@ -1,7 +1,10 @@
-# Redactor
+# Editor
 
-A lightweight collaborative document editor: create, edit (bold/italic/underline/headings/lists),
-import, and share plain-text documents between a small set of seeded users.
+A lightweight collaborative document editor: create, rename, edit (bold/italic/underline/headings/lists),
+import, share, and delete documents between a small set of seeded users.
+
+Open a document and edit its title at the top of the workspace. The title saves automatically and
+updates in the sidebar after saving.
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for design decisions and [AI_WORKFLOW.md](./AI_WORKFLOW.md)
 for how AI tools were used to build this.
@@ -76,3 +79,5 @@ automatically).
 - Sharing is single-tier: anyone a document is shared with gets full edit access (no view-only role,
   no revoke). This matches the assignment's "simple sharing model" scope.
 - No real-time collaboration — last save wins if two users edit the same document at once.
+- Deleting a document is permanent — no soft delete, recycle bin, or restore. Deleting a shared
+  document removes it (and its sharing records) for every collaborator, not just the owner.

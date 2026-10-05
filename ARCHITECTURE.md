@@ -39,6 +39,12 @@ access check: load the document, allow it if the current user is the owner, othe
 idempotent (upsert on the unique `(documentId, userId)` pair), so re-sharing with the same person is
 a no-op rather than an error.
 
+Deleting a document (`DELETE /:id`) is owner-only and permanent — there's no soft delete. The
+schema's foreign keys default to `RESTRICT`, so instead of adding a cascading delete at the schema
+level (which on SQLite means an invasive table-redefinition migration), the route deletes any
+`DocumentShare` rows for that document and the `Document` row itself inside one `$transaction`,
+guaranteeing no orphaned share rows without touching the schema.
+
 ## Editing & Saving
 
 The frontend holds one Tiptap editor per open document (`StarterKit` configured down to only bold,
@@ -54,5 +60,6 @@ to a single code path regardless of extension, at the cost of not rendering Mark
 
 ## Deliberately Excluded
 
-Real auth (OAuth/JWT), roles/permissions, revoke, real-time collaboration, comments, version
-history — all out of scope per the assignment's constraints, not oversights.
+Real auth (OAuth/JWT), roles/permissions, revoke, soft delete/recycle bin/restore, bulk delete,
+real-time collaboration, comments, version history — all out of scope per the assignment's
+constraints, not oversights.

@@ -26,15 +26,19 @@ export function ShareControl({ documentId }: { documentId: number }) {
 
   return (
     <div className="share-control">
-      <select value={selectedEmail} onChange={(e) => setSelectedEmail(e.target.value)}>
+      <select
+        className="share-select"
+        value={selectedEmail}
+        onChange={(e) => setSelectedEmail(e.target.value)}
+      >
         {candidates.map((user) => (
           <option key={user.id} value={user.email}>
             {user.name} ({user.email})
           </option>
         ))}
       </select>
-      <button type="button" onClick={handleShare} disabled={status === 'sharing'}>
-        Share
+      <button type="button" className="btn btn-secondary" onClick={handleShare} disabled={status === 'sharing'}>
+        {status === 'sharing' ? 'Sharing…' : 'Share'}
       </button>
       {status === 'done' && <span className="share-status success">{message}</span>}
       {status === 'error' && <span className="share-status error">{message}</span>}

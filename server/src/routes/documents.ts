@@ -147,6 +147,28 @@ documentsRouter.patch(
   }),
 )
 
+// DELETE /api/documents/:id
+documentsRouter.delete(
+  '/:id',
+  asyncHandler(async (req, res) => {
+    const documentId = parseDocumentId(req.params.id)
+    const document = await prisma.document.findUnique({ where: { id: documentId } })
+    if (!document) {
+      throw new HttpError(404, 'Document not found')
+    }
+    if (document.ownerId !== req.user.id) {
+      throw new HttpError(403, 'Only the document owner can delete this document')
+    }
+
+    await prisma.$transaction([
+      prisma.documentShare.deleteMany({ where: { documentId } }),
+      prisma.document.delete({ where: { id: documentId } }),
+    ])
+
+    res.status(204).send()
+  }),
+)
+
 // POST /api/documents/:id/shares
 documentsRouter.post(
   '/:id/shares',

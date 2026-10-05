@@ -3,6 +3,7 @@ import { StarterKit } from '@tiptap/starter-kit'
 import { useEffect, useState } from 'react'
 import {
   ApiError,
+  deleteDocument,
   getDocument,
   updateDocumentContent,
   updateDocumentTitle,
@@ -13,19 +14,42 @@ import { useDebouncedCallback } from '../hooks/useDebouncedCallback'
 import { EditorToolbar } from './EditorToolbar'
 import { ShareControl } from './ShareControl'
 
-type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
+type SaveStatus = 'saving' | 'saved' | 'error'
 
-function EditorBody({ document }: { document: DocumentDetail }) {
+function EditorBody({
+  document,
+  onDeleted,
+  onTitleSaved,
+}: {
+  document: DocumentDetail
+  onDeleted: () => void
+  onTitleSaved: (title: string) => void
+}) {
   const { currentUser } = useCurrentUser()
   const isOwner = document.ownerId === currentUser.id
   const [title, setTitle] = useState(document.title)
-  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('saved')
+  const [deleting, setDeleting] = useState(false)
+
+  const handleDelete = async () => {
+    if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) return
+
+    setDeleting(true)
+    try {
+      await deleteDocument(currentUser.id, document.id)
+      onDeleted()
+    } catch (err) {
+      alert(err instanceof ApiError ? err.message : 'Failed to delete document')
+      setDeleting(false)
+    }
+  }
 
   const saveTitle = useDebouncedCallback(async (next: string) => {
     setSaveStatus('saving')
     try {
       await updateDocumentTitle(currentUser.id, document.id, next)
       setSaveStatus('saved')
+      onTitleSaved(next)
     } catch {
       setSaveStatus('error')
     }
@@ -60,7 +84,7 @@ function EditorBody({ document }: { document: DocumentDetail }) {
 
   return (
     <div className="editor-page">
-      <div className="editor-header">
+      <div className="editor-topbar">
         <input
           className="title-input"
           value={title}
@@ -73,25 +97,38 @@ function EditorBody({ document }: { document: DocumentDetail }) {
         <span className={`doc-badge ${isOwner ? 'owned' : 'shared'}`}>
           {isOwner ? 'Owned' : 'Shared with you'}
         </span>
-        <span className="save-status">
+        <span className="save-status" role="status" aria-live="polite">
           {saveStatus === 'saving' && 'Saving…'}
           {saveStatus === 'saved' && 'Saved'}
           {saveStatus === 'error' && 'Failed to save'}
         </span>
       </div>
-      {isOwner && <ShareControl documentId={document.id} />}
+      {isOwner && (
+        <div className="owner-actions">
+          <ShareControl documentId={document.id} />
+          <button type="button" className="btn btn-danger-subtle" onClick={handleDelete} disabled={deleting}>
+            {deleting ? 'Deleting…' : 'Delete Document'}
+          </button>
+        </div>
+      )}
       <EditorToolbar editor={editor} />
-      <EditorContent editor={editor} className="editor-content" />
+      <div className="document-surface-wrapper">
+        <div className="document-surface">
+          <EditorContent editor={editor} className="editor-content" />
+        </div>
+      </div>
     </div>
   )
 }
 
-export function DocumentEditorPage({
+export function DocumentEditor({
   documentId,
-  onBack,
+  onDeleted,
+  onTitleSaved,
 }: {
   documentId: number
-  onBack: () => void
+  onDeleted: (id: number) => void
+  onTitleSaved: (id: number, title: string) => void
 }) {
   const { currentUser } = useCurrentUser()
   const [document, setDocument] = useState<DocumentDetail | null>(null)
@@ -107,14 +144,15 @@ export function DocumentEditorPage({
       })
   }, [currentUser.id, documentId])
 
+  if (error) return <p className="error-text editor-page-error">{error}</p>
+  if (!document) return <p className="editor-page-loading">Loading…</p>
+
   return (
-    <div>
-      <button type="button" onClick={onBack} className="back-button">
-        ← Back to documents
-      </button>
-      {error && <p className="error-text">{error}</p>}
-      {!error && !document && <p>Loading…</p>}
-      {document && <EditorBody key={document.id} document={document} />}
-    </div>
+    <EditorBody
+      key={document.id}
+      document={document}
+      onDeleted={() => onDeleted(document.id)}
+      onTitleSaved={(title) => onTitleSaved(document.id, title)}
+    />
   )
 }
